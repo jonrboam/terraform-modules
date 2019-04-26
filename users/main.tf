@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "user_profile_self_service" {
       "iam:*SigningCertificate*"
     ]
     resources = [
-      "${aws_iam_user.user.arn}"
+      "${aws_iam_user.user.*.arn}"
     ]
     sid       = "AllowIndividualUserToManageTheirAccountInformation"
   }
@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "user_profile_self_service" {
     ]
     resources = [
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/${var.name}",
-      "${aws_iam_user.user.arn}"
+      "${aws_iam_user.user.*.arn}"
     ]
     sid       = "AllowIndividualUserToManageThierMFA"
   }
@@ -57,7 +57,7 @@ data "aws_iam_policy_document" "user_profile_self_service" {
 resource "aws_iam_user_policy" "user_profile_self_service" {
   name    = "UserProfileSelfService"
   policy  = "${data.aws_iam_policy_document.user_profile_self_service.json}"
-  user    = "${aws_iam_user.user.name}"
+  user    = "${aws_iam_user.user.*.name}"
 }
 
 data "aws_iam_policy_document" "enforce_mfa" {
@@ -102,8 +102,8 @@ data "aws_iam_policy_document" "enforce_mfa" {
       "iam:GetAccountSummary"
     ]
     not_resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/${var.name}",
-      "${aws_iam_user.user.arn}"
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/${aws_iam_user.user.*.name}",
+      "${aws_iam_user.user.*.arn}"
     ]
     sid           = "DenyIamAccessToOtherAccountsUnlessMFAd"
   }
@@ -112,27 +112,27 @@ data "aws_iam_policy_document" "enforce_mfa" {
 resource "aws_iam_user_policy" "enforce_mfa" {
   name    = "EnforceMFA"
   policy  = "${data.aws_iam_policy_document.enforce_mfa.json}"
-  user    = "${aws_iam_user.user.name}"
+  user    = "${aws_iam_user.user.*.name}"
 }
 
 resource "aws_iam_user_policy_attachment" "manage_specific_credentials" {
   policy_arn = "arn:aws:iam::aws:policy/IAMSelfManageServiceSpecificCredentials"
-  user       = "${aws_iam_user.user.name}"
+  user       = "${aws_iam_user.user.*.name}"
 }
 
 resource "aws_iam_user_policy_attachment" "change_password" {
   policy_arn = "arn:aws:iam::aws:policy/IAMUserChangePassword"
-  user       = "${aws_iam_user.user.name}"
+  user       = "${aws_iam_user.user.*.name}"
 }
 
 resource "aws_iam_user_policy_attachment" "manage_ssh_keys" {
   policy_arn = "arn:aws:iam::aws:policy/IAMUserSSHKeys"
-  user       = "${aws_iam_user.user.name}"
+  user       = "${aws_iam_user.user.*.name}"
 }
 
 resource "aws_iam_user_policy_attachment" "iam_read_only" {
   policy_arn = "arn:aws:iam::aws:policy/IAMReadOnlyAccess"
-  user       = "${aws_iam_user.user.name}"
+  user       = "${aws_iam_user.user.*.name}"
 }
 
 
