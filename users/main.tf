@@ -62,6 +62,7 @@ resource "aws_iam_user_policy" "user_profile_self_service" {
 }
 
 data "aws_iam_policy_document" "enforce_mfa" {
+  count   = "${length(var.name)}"
   statement {
     condition {
       test      = "Null"
