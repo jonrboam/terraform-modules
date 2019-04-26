@@ -25,7 +25,7 @@ data "aws_iam_policy_document" "user_profile_self_service" {
       "iam:*MFADevice"
     ]
     resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/${aws_iam_user.user.*.name}",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/${element(var.name, count.index)}",
       "${aws_iam_user.user.*.arn}"
     ]
     sid       = "AllowIndividualUserToManageTheirrMFA"
