@@ -114,7 +114,7 @@ data "aws_iam_policy_document" "enforce_mfa" {
 resource "aws_iam_user_policy" "enforce_mfa" {
   name    = "EnforceMFA"
   count   = "${length(var.name)}"
-  policy  = "${data.aws_iam_policy_document.enforce_mfa.json.*}"
+  policy  = "${data.aws_iam_policy_document.enforce_mfa.[count.index].json}"
   user    = "${aws_iam_user.user.*.name}"
 }
 
