@@ -57,7 +57,7 @@ data "aws_iam_policy_document" "user_profile_self_service" {
 resource "aws_iam_user_policy" "user_profile_self_service" {
   name    = "UserProfileSelfService"
   count   = "${length(var.name)}"
-  policy  = "${data.aws_iam_policy_document.user_profile_self_service.json}"
+  policy  = "${data.aws_iam_policy_document.user_profile_self_service.json.*}"
   user    = "${aws_iam_user.user.*.name}"
 }
 
@@ -114,7 +114,7 @@ data "aws_iam_policy_document" "enforce_mfa" {
 resource "aws_iam_user_policy" "enforce_mfa" {
   name    = "EnforceMFA"
   count   = "${length(var.name)}"
-  policy  = "${data.aws_iam_policy_document.enforce_mfa.json}"
+  policy  = "${data.aws_iam_policy_document.enforce_mfa.json.*}"
   user    = "${aws_iam_user.user.*.name}"
 }
 
